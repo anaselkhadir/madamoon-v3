@@ -1,0 +1,87 @@
+@import "tailwindcss";
+
+@theme inline {
+  --color-ivoire: #f5f1ea;
+  --color-creme: #fdfbf7;
+  --color-encre: #2a211a;
+  --color-bois: #3a2b20;
+  --color-gilt: #c9a45c;
+  --color-sauge: #a8b49a;
+  --color-velours: #7e1f2b;
+  --color-voile: #e9e2d6;
+  --color-taupe: #857a6e;
+  --font-serif: var(--font-cormorant);
+  --font-sans: var(--font-jost);
+  --ease-soie: cubic-bezier(0.33, 1, 0.68, 1);
+}
+
+:root {
+  color-scheme: light;
+}
+
+html,
+body {
+  height: 100%;
+}
+
+body {
+  background: #f5f1ea;
+  color: #2a211a;
+  font-family: var(--font-jost), ui-sans-serif, system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: clip;
+}
+
+::selection {
+  background: #c9a45c;
+  color: #2a211a;
+}
+
+/* Pastille hotspot pulsante */
+@keyframes pulse-ring {
+  0% {
+    transform: scale(1);
+    opacity: 0.7;
+  }
+  100% {
+    transform: scale(2.4);
+    opacity: 0;
+  }
+}
+
+.hotspot-dot {
+  position: relative;
+  width: 18px;
+  height: 18px;
+  border-radius: 9999px;
+  background: #fdfbf7;
+  border: 1px solid #c9a45c;
+  box-shadow: 0 2px 12px rgba(42, 33, 26, 0.35);
+  cursor: pointer;
+  transition: transform 0.4s var(--ease-soie);
+}
+
+.hotspot-dot::after {
+  content: "";
+  position: absolute;
+  inset: -1px;
+  border-radius: 9999px;
+  border: 1px solid #c9a45c;
+  animation: pulse-ring 2.2s var(--ease-soie) infinite;
+}
+
+.hotspot-dot:hover {
+  transform: scale(1.25);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hotspot-dot::after {
+    animation: none;
+  }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
