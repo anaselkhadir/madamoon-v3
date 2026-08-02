@@ -1,10 +1,12 @@
 import type { NextConfig } from "next";
 
 // Build GitHub Pages : DEPLOY_TARGET=pages npm run build
-// (export statique servi sous https://anaselkhadir.github.io/madamoon-v3/)
 const isPages = process.env.DEPLOY_TARGET === "pages";
 
 const nextConfig: NextConfig = {
+  env: {
+    NEXT_PUBLIC_BASE_PATH: isPages ? "/madamoon-v3" : "",
+  },
   ...(isPages
     ? {
         output: "export" as const,

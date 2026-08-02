@@ -13,8 +13,8 @@ import { useBoutique } from "@/store/useBoutique";
  * À la sélection d'une robe, la caméra glisse doucement vers elle.
  */
 
-const DEFAULT_TARGET = new THREE.Vector3(0.4, 1.5, -0.6);
-const DEFAULT_POS = new THREE.Vector3(-0.6, 1.7, 4.6);
+const DEFAULT_TARGET = new THREE.Vector3(-0.25, 1.35, -1.1);
+const DEFAULT_POS = new THREE.Vector3(1.3, 1.6, 3.7);
 
 export default function CameraRig() {
   const controls = useRef<OrbitControlsImpl>(null);
@@ -55,12 +55,12 @@ export default function CameraRig() {
       enablePan={false}
       enableDamping
       dampingFactor={0.06}
-      minDistance={2.0}
-      maxDistance={6.2}
+      minDistance={1.6}
+      maxDistance={5.4}
       minPolarAngle={Math.PI * 0.34}
       maxPolarAngle={Math.PI * 0.52}
-      minAzimuthAngle={-Math.PI * 0.32}
-      maxAzimuthAngle={Math.PI * 0.32}
+      minAzimuthAngle={-Math.PI * 0.22}
+      maxAzimuthAngle={Math.PI * 0.38}
       rotateSpeed={0.55}
       zoomSpeed={0.7}
     />

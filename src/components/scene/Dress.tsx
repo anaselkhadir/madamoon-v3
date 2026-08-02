@@ -5,13 +5,12 @@ import * as THREE from "three";
 import type { Silhouette } from "@/data/dresses";
 
 /*
- * Robe stylisée (placeholder géométrique, remplaçable par un GLTF).
- * Le profil de révolution (LatheGeometry) varie selon la silhouette réelle.
- * Origine du groupe : ourlet de la robe (y=0), cintre vers le rail au-dessus.
+ * Robe stylisée réaliste (placeholder remplaçable par un GLTF) :
+ * profil de révolution par silhouette + plis d'étoffe (ondulation radiale
+ * amplifiée vers l'ourlet) + matière satin (sheen).
  */
 
 const PROFILES: Record<Silhouette, [number, number][]> = {
-  // [rayon, hauteur depuis l'ourlet]
   princesse: [
     [0.44, 0], [0.42, 0.06], [0.34, 0.3], [0.24, 0.55], [0.14, 0.78],
     [0.125, 0.85], [0.15, 1.0], [0.16, 1.08], [0.1, 1.16], [0.045, 1.2],
@@ -35,11 +34,20 @@ const PROFILES: Record<Silhouette, [number, number][]> = {
 };
 
 const TINTS: Record<Silhouette, string> = {
-  princesse: "#fbf8f2",
-  sirene: "#f6f0e6",
-  fluide: "#f8f4ec",
-  trapeze: "#f4efe4",
-  minimaliste: "#faf7f0",
+  princesse: "#f7f2ea",
+  sirene: "#f2ebdf",
+  fluide: "#f5f0e6",
+  trapeze: "#f0eadc",
+  minimaliste: "#f8f4ec",
+};
+
+/* Nombre de plis par silhouette (plus dense = étoffe plus travaillée). */
+const FOLDS: Record<Silhouette, number> = {
+  princesse: 14,
+  sirene: 10,
+  fluide: 8,
+  trapeze: 12,
+  minimaliste: 6,
 };
 
 export default function DressMesh({
@@ -51,31 +59,53 @@ export default function DressMesh({
 }) {
   const geometry = useMemo(() => {
     const pts = PROFILES[silhouette].map(([r, y]) => new THREE.Vector2(r, y));
-    const geo = new THREE.LatheGeometry(pts, 28);
+    const geo = new THREE.LatheGeometry(pts, 72);
+    // Plis de tissu : ondulation radiale qui s'amplifie vers l'ourlet
+    const pos = geo.attributes.position;
+    const folds = FOLDS[silhouette];
+    const v = new THREE.Vector3();
+    for (let i = 0; i < pos.count; i++) {
+      v.fromBufferAttribute(pos, i);
+      const angle = Math.atan2(v.z, v.x);
+      const radius = Math.hypot(v.x, v.z);
+      if (radius < 1e-4) continue;
+      // Amplitude nulle au buste (y>0.9), maximale à l'ourlet (y=0)
+      const drape = Math.max(0, 1 - v.y / 0.9);
+      const ripple = 1 + Math.sin(angle * folds + v.y * 2.2) * 0.045 * drape;
+      pos.setX(i, Math.cos(angle) * radius * ripple);
+      pos.setZ(i, Math.sin(angle) * radius * ripple);
+    }
     geo.computeVertexNormals();
     return geo;
   }, [silhouette]);
 
   return (
     <group>
-      {/* Corps de la robe */}
-      <mesh geometry={geometry} castShadow>
-        <meshStandardMaterial
+      {/* Corps de la robe — satin */}
+      <mesh geometry={geometry} castShadow receiveShadow>
+        <meshPhysicalMaterial
           color={TINTS[silhouette]}
-          roughness={0.55}
-          metalness={0.02}
+          roughness={0.62}
+          sheen={1}
+          sheenColor="#fffdf6"
+          sheenRoughness={0.4}
           emissive={hover ? "#c9a45c" : "#000000"}
-          emissiveIntensity={hover ? 0.12 : 0}
+          emissiveIntensity={hover ? 0.1 : 0}
         />
       </mesh>
-      {/* Cintre bois + crochet doré vers le rail */}
+      {/* Ceinture fine */}
+      <mesh position={[0, 0.86, 0]}>
+        <torusGeometry args={[0.128, 0.008, 8, 40]} />
+        <meshStandardMaterial color="#e8ddc8" roughness={0.5} />
+      </mesh>
+      {/* Cintre bois + crochet laiton */}
       <mesh position={[0, 1.24, 0]} rotation={[0, 0, Math.PI / 2]} castShadow>
-        <capsuleGeometry args={[0.012, 0.3, 4, 8]} />
-        <meshStandardMaterial color="#8a6a48" roughness={0.5} />
+        <capsuleGeometry args={[0.012, 0.3, 4, 10]} />
+        <meshStandardMaterial color="#8a6a48" roughness={0.45} />
       </mesh>
       <mesh position={[0, 1.32, 0]}>
-        <torusGeometry args={[0.05, 0.007, 8, 20, Math.PI]} />
-        <meshStandardMaterial color="#c9a45c" roughness={0.3} metalness={0.8} />
+        <torusGeometry args={[0.05, 0.007, 8, 22, Math.PI]} />
+        <meshStandardMaterial color="#c9a45c" roughness={0.25} metalness={0.9} />
       </mesh>
     </group>
   );

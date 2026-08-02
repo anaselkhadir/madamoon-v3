@@ -1,8 +1,8 @@
 /*
  * Robes réelles du catalogue MADAMOON.
  * `silhouette` pilote la forme 3D stylisée ; `photo` = vraie photo boutique.
- * Positions : rail principal (mur droit) et rail secondaire (fond droit),
- * fidèles à la photo de référence du showroom.
+ * Rail principal : face caméra, devant l'armoire du fond (droite de la vue),
+ * robes espacées pour rester cliquables — fidèle à la photo de référence.
  */
 
 export type Silhouette = "princesse" | "sirene" | "fluide" | "trapeze" | "minimaliste";
@@ -29,7 +29,7 @@ export const DRESSES: Dress[] = [
     silhouette: "fluide",
     photo: "/images/dress-adularia.jpg",
     price: "À partir de 1500 € — retouches incluses",
-    position: [2.1, 0, -2.6],
+    position: [1.15, 0, -2.98],
     facing: 0,
   },
   {
@@ -41,7 +41,7 @@ export const DRESSES: Dress[] = [
     silhouette: "trapeze",
     photo: "/images/dress-pendant.jpg",
     price: "À partir de 1500 € — retouches incluses",
-    position: [1.0, 0, -2.6],
+    position: [1.95, 0, -2.98],
     facing: 0,
   },
   {
@@ -53,7 +53,7 @@ export const DRESSES: Dress[] = [
     silhouette: "princesse",
     photo: "/images/dress-sienna.jpg",
     price: "À partir de 1500 € — retouches incluses",
-    position: [3.2, 0, -2.6],
+    position: [2.8, 0, -2.98],
     facing: 0,
   },
   {
@@ -65,8 +65,8 @@ export const DRESSES: Dress[] = [
     silhouette: "minimaliste",
     photo: "/images/dress-carrie.jpg",
     price: "À partir de 1500 € — retouches incluses",
-    position: [4.45, 0, -1.15],
-    facing: -Math.PI / 2,
+    position: [3.6, 0, -2.98],
+    facing: 0,
   },
   {
     id: "shiloh",
@@ -77,9 +77,16 @@ export const DRESSES: Dress[] = [
     silhouette: "sirene",
     photo: "/images/dress-shiloh.jpg",
     price: "À partir de 1500 € — retouches incluses",
-    position: [4.45, 0, 0.15],
-    facing: -Math.PI / 2,
+    position: [4.4, 0, -2.98],
+    facing: 0,
   },
+];
+
+/* Robes de décor (rail du mur droit, non cliquables — profondeur de scène). */
+export const DECO_DRESSES: { silhouette: Silhouette; position: [number, number, number]; facing: number }[] = [
+  { silhouette: "fluide", position: [4.95, 0, -0.9], facing: -Math.PI / 2 },
+  { silhouette: "trapeze", position: [4.95, 0, 0.1], facing: -Math.PI / 2 },
+  { silhouette: "minimaliste", position: [4.95, 0, 1.1], facing: -Math.PI / 2 },
 ];
 
 export const SIZES = ["34", "36", "38", "40", "42", "44", "Sur mesure"];
